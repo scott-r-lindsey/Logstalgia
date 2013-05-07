@@ -100,11 +100,15 @@ void FXFont::render(float x, float y, const std::string & text) const{
         y = roundf(y);
     }
 
+#ifdef _RPI
+    //FIXME
+#else
     glPushMatrix();
         glTranslatef(x,y,0.0f);
         glScalef(1.0, -1.0, 1.0f);
         ft->Render(text.c_str());
     glPopMatrix();
+#endif
 }
 
 void FXFont::print(float x, float y, const char *str, ...) const{
@@ -132,11 +136,15 @@ void FXFont::draw(float x, float y, const std::string & text) const{
     }
 
     if(shadow) {
+#ifdef _RPI
+    //FIXME
+#else
         glPushAttrib(GL_CURRENT_BIT);
         vec4f current = display.currentColour();
         glColor4f(0.0f, 0.0f, 0.0f, shadow_strength * current.w);
         render(x + shadow_offset.x, y + shadow_offset.y, text);
         glPopAttrib();
+#endif
     }
 
     render(x, y, text);
