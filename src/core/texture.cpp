@@ -80,6 +80,9 @@ int TextureResource::colourFormat(SDL_Surface* surface) {
     int colours = surface->format->BytesPerPixel;
     int format  = 0;
 
+#ifdef _RPI
+    // FIXME
+#else
     if (colours == 4) {
         if (surface->format->Rmask == 0x000000ff) {
             format = GL_RGBA;
@@ -92,6 +95,7 @@ int TextureResource::colourFormat(SDL_Surface* surface) {
         else
             format = GL_BGR;
     }
+#endif
 
     return format;
 }

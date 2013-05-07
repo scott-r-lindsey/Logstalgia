@@ -95,6 +95,10 @@ void TextArea::draw() {
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     vec4f col(colour, 0.2f);
+
+#ifdef _RPI
+    // FIXME
+#else
     glColor4fv(col);
     glBegin(GL_QUADS);
         glVertex2f(corner.x,           corner.y);
@@ -105,6 +109,7 @@ void TextArea::draw() {
 
     glEnable(GL_TEXTURE_2D);
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+#endif
 
     int yinc = 2;
 

@@ -245,7 +245,11 @@ QuadNode::QuadNode(QuadTree* tree, QuadNode* parent, Bounds2D bounds, int parent
 
 QuadNode::~QuadNode() {
 
+#ifdef _RPI
+    // FIXME
+#else
     if(listid) glDeleteLists(listid, 1);
+#endif
 
     if(children.size()>0) {
         for(int i=0;i<4;i++) {
@@ -277,9 +281,13 @@ int QuadNode::usedChildren() {
 int QuadNode::draw(Frustum& frustum) {
 
     if(listid && items.size()) {
+#ifdef _RPI
+    // FIXME
+#else
         glPushMatrix();
             glCallList(listid);
         glPopMatrix();
+#endif
         return 1;
     }
 
@@ -301,6 +309,9 @@ int QuadNode::draw(Frustum& frustum) {
 void QuadNode::generateLists() {
 
     if(items.size() > 0) {
+#ifdef _RPI
+    // FIXME
+#else
         if(!listid) listid = glGenLists(1);
 
         glNewList(listid, GL_COMPILE);
@@ -311,6 +322,7 @@ void QuadNode::generateLists() {
         }
 
         glEndList();
+#endif
         return;
     }
 

@@ -430,7 +430,11 @@ int main(int argc, char *argv[]) {
         }
     }
 
+#ifdef _RPI
+    // FIXME
+#else
     if(multisample) glEnable(GL_MULTISAMPLE_ARB);
+#endif
 
     Logstalgia* ls = 0;
 

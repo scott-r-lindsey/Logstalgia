@@ -1113,12 +1113,20 @@ void Logstalgia::draw(float t, float dt) {
     display.setClearColour(background);
     display.clear();
 
+#ifdef _RPI
+    // FIXME
+#else
     glDisable(GL_FOG);
+#endif
 
     display.mode2D();
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
+#ifdef _RPI
+    // FIXME
+#else
     glDisable(GL_LIGHTING);
+#endif
 
     profile_start("draw ip summarizer");
 
@@ -1199,7 +1207,11 @@ void Logstalgia::draw(float t, float dt) {
     glEnable(GL_TEXTURE_2D);
 
     if(uimessage_timer>0.1f) {
+#ifdef _RPI
+    // FIXME
+#else 
         glColor4f(1.0,1.0,uimessage_timer/3.0f,uimessage_timer/3.0f);
+#endif
 
         int mwidth = fontLarge.getWidth(uimessage.c_str());
 
@@ -1219,6 +1231,9 @@ void Logstalgia::draw(float t, float dt) {
         float logo_alpha = std::min(1.0f, gSplash/3.0f);
         float logo_bg    = std::min(0.2f, gSplash/10.0f);
 
+#ifdef _RPI
+    // FIXME
+#else 
         glDisable(GL_TEXTURE_2D);
         glColor4f(0.0f, 0.5f, 1.0f, logo_bg);
         glBegin(GL_QUADS);
@@ -1227,12 +1242,16 @@ void Logstalgia::draw(float t, float dt) {
             glVertex2f(display.width, corner.y + logoheight);
             glVertex2f(display.width, corner.y);
         glEnd();
+#endif
 
         glEnable(GL_TEXTURE_2D);
 
         fontLarge.alignTop(true);
         fontLarge.dropShadow(true);
 
+#ifdef _RPI
+    // FIXME
+#else
         glColor4f(1,1,1,logo_alpha);
         fontLarge.draw(display.width/2 - logowidth/2,display.height/2 - 30, "Logstalgia");
         glColor4f(0,1,1,logo_alpha);
@@ -1241,13 +1260,18 @@ void Logstalgia::draw(float t, float dt) {
         glColor4f(1,1,1,logo_alpha);
         fontMedium.draw(display.width/2 - cwidth/2,display.height/2 + 17, "Website Access Log Viewer");
         fontMedium.draw(display.width/2 - awidth/2,display.height/2 + 37, "(C) 2008 Andrew Caudwell");
+#endif
 
         gSplash-=dt;
     }
 
     if(!gDisableProgress) slider.draw(dt);
 
+#ifdef _RPI
+    // FIXME
+#else
     glColor4f(1,1,1,font_alpha);
+#endif
 
     if(info) {
         fontMedium.print(2,2, "FPS %d", (int) fps);
@@ -1258,7 +1282,11 @@ void Logstalgia::draw(float t, float dt) {
         fontMedium.draw(2,2,  displaydate.c_str());
         fontMedium.draw(2,19, displaytime.c_str());
     }
+#ifdef _RPI
+    // FIXME
+#else
     glColor4f(1,1,1,font_alpha);
+#endif
 
     int counter_width = fontLarge.getWidth("00000000");
 

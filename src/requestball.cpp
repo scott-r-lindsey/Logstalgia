@@ -112,6 +112,9 @@ void RequestBall::drawGlow() const {
 
     vec3f glow_col = colour * gGlowIntensity * alpha;
 
+#ifdef _RPI
+    // FIXME
+#else
     glColor4f(glow_col.x, glow_col.y, glow_col.z, 1.0f);
 
     glPushMatrix();
@@ -128,6 +131,7 @@ void RequestBall::drawGlow() const {
             glVertex2f(-glow_radius,glow_radius);
         glEnd();
     glPopMatrix();
+#endif
 }
 
 void RequestBall::draw(float dt) const {
@@ -137,7 +141,10 @@ void RequestBall::draw(float dt) const {
     if(gBounce || !has_bounced || no_bounce) {
 
         vec2f offsetpos = pos - offset;
-        
+
+#ifdef _RPI
+    // FIXME
+#else
         glColor4f(colour.x, colour.y, colour.z, 1.0f);
 
         glPushMatrix();
@@ -157,6 +164,7 @@ void RequestBall::draw(float dt) const {
                 glVertex2f(0.0f, size);
             glEnd();
         glPopMatrix();
+#endif
     }
 }
 
@@ -167,6 +175,10 @@ void RequestBall::drawResponseCode() const {
     if(!le->successful) drift *= -1.0f;
     vec2f msgpos = (vel * drift) + vec2f(dest.x-45.0f, dest.y);
 
+#ifdef _RPI
+    // FIXME
+#else
     glColor4f(response_colour.x, response_colour.y, response_colour.z, 1.0f - std::min(1.0f, prog * 2.0f) );
+#endif
     font->draw(msgpos.x, msgpos.y, response_code.c_str());
 }

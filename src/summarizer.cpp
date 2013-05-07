@@ -363,7 +363,11 @@ void SummItem::logic(float dt) {
 }
 
 void SummItem::draw(float alpha) {
+#ifdef _RPI
+    // FIXME
+#else
     glColor4f(colour.x, colour.y, colour.z, colour.w * alpha);
+#endif
     font.draw((int)pos.x, (int)pos.y, displaystr.c_str());
 }
 
@@ -635,7 +639,11 @@ void Summarizer::draw(float dt, float alpha) {
 	glEnable(GL_TEXTURE_2D);
 
     if(title.size()) {
+#ifdef _RPI
+    // FIXME
+#else
         glColor4f(1.0f, 1.0f, 1.0f, alpha);
+#endif
         font.draw((int)pos_x, (int)(top_gap - font_gap), title.c_str());
     }
 

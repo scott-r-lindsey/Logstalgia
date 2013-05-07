@@ -126,6 +126,9 @@ void Paddle::drawShadow() {
 
     vec2f spos = vec2f(pos.x + 1.0f, pos.y + 1.0f);
 
+#ifdef _RPI
+    // FIXME
+#else
     glColor4f(0.0, 0.0, 0.0, 0.7 * colour.w);
     glBegin(GL_QUADS);
         glVertex2f(spos.x,spos.y-(height/2));
@@ -133,11 +136,15 @@ void Paddle::drawShadow() {
         glVertex2f(spos.x+width,spos.y+(height/2));
         glVertex2f(spos.x+width,spos.y-(height/2));
     glEnd();
+#endif
 }
 
 void Paddle::draw() {
     if(!gPaddleMode) return;
 
+#ifdef _RPI
+    // FIXME
+#else
     glColor4fv(colour);
     glBegin(GL_QUADS);
         glVertex2f(pos.x,pos.y-(height/2));
@@ -145,4 +152,5 @@ void Paddle::draw() {
         glVertex2f(pos.x+width,pos.y+(height/2));
         glVertex2f(pos.x+width,pos.y-(height/2));
     glEnd();
+#endif
 }

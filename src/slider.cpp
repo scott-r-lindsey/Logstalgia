@@ -106,23 +106,36 @@ void PositionSlider::logic(float dt) {
 void PositionSlider::draw(float dt) {
     glDisable(GL_TEXTURE_2D);
     glLineWidth(2.0f);
+#ifdef _RPI
+    // FIXME
+#else
     glColor4f(slidercol.x, slidercol.y, slidercol.z, alpha);
+#endif
 
     bounds.draw();
 
     float posx = bounds.min.x + (bounds.max.x - bounds.min.x) * percent;
 
     glLineWidth(2.0f);
+        
+#ifdef _RPI
+    // FIXME
+#else
     glBegin(GL_LINES);
         glVertex2f(posx, bounds.min.y);
         glVertex2f(posx, bounds.max.y);
     glEnd();
+#endif
 
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
     glEnable(GL_TEXTURE_2D);
 
+#ifdef _RPI
+    // FIXME
+#else
     glColor4f(1.0, 1.0, 1.0, 1.0);
+#endif
 
     if(caption.size() && mouseover >= 0.0) {
         font.draw(std::min((double)display.width - capwidth - 1.0, std::max(1.0, mouseover - (capwidth/2.0))), bounds.min.y - 25.0, caption.c_str());
