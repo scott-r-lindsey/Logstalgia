@@ -49,11 +49,6 @@ int main(int argc, char *argv[]) {
     int   height      = 768;
     bool  fullscreen  = false;
 
-#ifdef _RPI
-    bcm_host_init();           
-    atexit(bcm_host_deinit);
-#endif
-
     float simu_speed  = 1.0f;
     float update_rate = 5.0f;
     bool multisample  = false;

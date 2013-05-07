@@ -148,6 +148,11 @@ void SDLAppInit(std::string apptitle, std::string execname) {
     gSDLAppTitle = apptitle;
     gSDLAppExec  = execname;
 
+#ifdef _RPI                    
+    bcm_host_init();           
+    atexit(bcm_host_deinit);
+#endif
+
     std::string conf_dir     = "";
     std::string resource_dir = "data/";
     std::string fonts_dir    = "data/fonts/";
