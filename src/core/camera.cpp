@@ -37,9 +37,12 @@ Light::Light(vec3f pos) {
 }
 
 void Light::lookAt(vec3f target) {
+/*
+    // FIXME!!!
     gluLookAt( pos.x,    pos.y,    pos.z,
                target.x, target.y, target.z,
                0.0f,   1.0f,  0.0f);
+*/
 }
 
 void Light::setPos(vec3f pos) {
@@ -69,14 +72,16 @@ Camera::Camera(vec3f pos, vec3f target) {
 
 void Camera::focus() {
     display.mode3D(fov, znear, zfar);
-    glMatrixMode(GL_PROJECTION);
+    // FIXME!!!
+    //glMatrixMode(GL_PROJECTION);
 
     look();
 }
 
 void Camera::focusOn(vec3f p) {
     display.mode3D(fov, znear, zfar);
-    glMatrixMode(GL_PROJECTION);
+    // FIXME!!!
+    //glMatrixMode(GL_PROJECTION);
 
     lookAt(p);
 }
@@ -87,9 +92,12 @@ void Camera::look() {
 }
 
 void Camera::lookAt(vec3f target) {
+/*
+    // FIXME!!!
     gluLookAt( pos.x,    pos.y,    pos.z,
                target.x, target.y, target.z,
                up.x, up.y, up.z);
+*/
 }
 
 vec3f Camera::getUp() {
