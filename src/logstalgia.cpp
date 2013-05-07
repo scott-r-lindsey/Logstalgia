@@ -71,8 +71,10 @@ void logstalgia_help() {
 
     printf("Usage: logstalgia [OPTIONS] FILE\n\n");
     printf("Options:\n");
+#ifndef _RPI
     printf("  -WIDTHxHEIGHT              Set window size\n");
     printf("  -f                         Fullscreen\n\n");
+#endif
 
     printf("  -b --background FFFFFF     Background colour in hex\n\n");
 
