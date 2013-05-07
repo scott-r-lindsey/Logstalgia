@@ -51,7 +51,11 @@ public:
 class TextureManager : public ResourceManager {
 public:
     TextureManager();
+#ifdef _RPI
+    TextureResource* grab(std::string file, int mipmaps=0, int clamp=1, int trilinear=0, bool external_file = false);
+#else 
     TextureResource* grab(std::string file, int mipmaps=1, int clamp=1, int trilinear=0, bool external_file = false);
+#endif
 };
 
 extern TextureManager texturemanager;
