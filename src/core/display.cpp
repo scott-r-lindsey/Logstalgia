@@ -82,6 +82,23 @@ void SDLAppDisplay::init(std::string window_title, int width, int height, bool f
     SDL_Init(SDL_INIT_TIMER | SDL_INIT_VIDEO);
     atexit(SDL_Quit);
 
+#ifdef _RPI
+
+    surface = SDL_SetVideoMode(0, 0, 0, SDL_SWSURFACE | SDL_FULLSCREEN);
+
+    printf("hey guys, it's time for EGL!\n");
+
+    // Get an EGL display connection:
+/*
+    egl_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+    if(egl_display == EGL_NO_DISPLAY)
+        throw EGLException("eglGetDisplay");
+
+    printf("k, that's one\n");
+*/
+
+#else
+
     //vsync
     if(vsync) SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
     else SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 0);
@@ -98,8 +115,6 @@ void SDLAppDisplay::init(std::string window_title, int width, int height, bool f
 #ifdef _WIN32
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     surface = SDL_SetVideoMode(width, height, 32, flags);
-#elif _RPI
-    surface = SDL_SetVideoMode(0, 0, 0, SDL_SWSURFACE | SDL_FULLSCREEN);
 #else
     if(enable_shaders) {
         SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
@@ -108,6 +123,7 @@ void SDLAppDisplay::init(std::string window_title, int width, int height, bool f
         SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
         surface = SDL_SetVideoMode(width, height, 24, flags);
     }
+#endif
 #endif
 
     if (!surface) {
@@ -139,24 +155,36 @@ void SDLAppDisplay::clear() {
 }
 
 void SDLAppDisplay::mode3D(float fov, float znear, float zfar) {
+#ifdef _RPI
+    // FIXME
+#else
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(fov, (GLfloat)width/(GLfloat)height, znear, zfar);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+#endif
 }
 
 void SDLAppDisplay::mode2D() {
+#ifdef _RPI
+    // FIXME
+#else
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(0, width, height, 0, -1.0, 1.0);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+#endif
 }
 
 vec4f SDLAppDisplay::currentColour() {
     vec4f colour;
+#ifdef _RPI
+    // FIXME
+#else
    	glGetFloatv(GL_CURRENT_COLOR, colour);
+#endif
    	return colour;
 }
 
@@ -165,6 +193,9 @@ void SDLAppDisplay::checkGLErrors() {
 }
 
 void SDLAppDisplay::fullScreenQuad(bool coord_flip) {
+#ifdef _RPI
+    // FIXME
+#else
 
     int y1 = coord_flip ? 0 : 1;
     int y2 = coord_flip ? 1 : 0;
@@ -182,6 +213,7 @@ void SDLAppDisplay::fullScreenQuad(bool coord_flip) {
         glTexCoord2i(0,y2);
         glVertex2i(0, display.height);
     glEnd();
+#endif
 }
 
 void SDLAppDisplay::renderToTexture(GLuint target, int width, int height, GLenum format) {
@@ -212,7 +244,11 @@ GLuint SDLAppDisplay::createTexture(int width, int height, bool mipmaps, bool cl
     glBindTexture(GL_TEXTURE_2D, textureid);
 
     if(mipmaps) {
+#ifdef _RPI
+    // FIXME
+#else
         gluBuild2DMipmaps(GL_TEXTURE_2D, 4, width, height, format, GL_UNSIGNED_BYTE, data);
+#endif
     } else {
     	glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0, format, GL_UNSIGNED_BYTE, data);
     }
@@ -237,6 +273,10 @@ GLuint SDLAppDisplay::createTexture(int width, int height, bool mipmaps, bool cl
 }
 
 vec3f SDLAppDisplay::project(vec3f pos) {
+#ifdef _RPI
+    // FIXME
+#else
+    GLint viewport[4];
     GLint viewport[4];
     GLdouble modelview[16];
     GLdouble projection[16];
@@ -251,9 +291,13 @@ vec3f SDLAppDisplay::project(vec3f pos) {
     winY = (float)viewport[3] - winY;
 
     return vec3f((float) winX, (float) winY, (float) winZ);
+#endif
 }
 
 vec3f SDLAppDisplay::unproject(vec2f pos) {
+#ifdef _RPI
+    // FIXME
+#else
     GLint viewport[4];
     GLdouble modelview[16];
     GLdouble projection[16];
@@ -270,4 +314,5 @@ vec3f SDLAppDisplay::unproject(vec2f pos) {
     gluUnProject( winX, winY, winZ, modelview, projection, viewport, &posX, &posY, &posZ);
 
     return vec3f((float) posX, (float) posY, (float) posZ);
+#endif
 }
