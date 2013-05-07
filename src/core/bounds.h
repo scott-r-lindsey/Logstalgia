@@ -103,6 +103,9 @@ public:
     }
 
     void draw() {
+#ifdef _RPI
+    // FIXME
+#else
         glBegin(GL_LINE_STRIP);
             glVertex2fv(min);
             glVertex2f(max.x, min.y);
@@ -110,6 +113,7 @@ public:
             glVertex2f(min.x, max.y);
             glVertex2fv(min);
         glEnd();
+#endif
     }
 };
 
@@ -181,11 +185,15 @@ public:
     }
 
     void draw() {
+#ifdef _RPI
+    // FIXME
+#else
         glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
         glBegin(GL_LINES);
             glVertex3fv(min);
             glVertex3fv(max);
         glEnd();
+#endif
     }
 
 };
