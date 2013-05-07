@@ -34,6 +34,10 @@
 #include <stdexcept>
 #include <vector>
 
+#ifdef _RPI 
+#include <bcm_host.h>
+#endif
+
 extern std::string gSDLAppConfDir;
 extern std::string gSDLAppResourceDir;
 extern std::string gSDLAppPathSeparator;

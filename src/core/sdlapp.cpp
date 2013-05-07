@@ -36,6 +36,11 @@ std::string gSDLAppPathSeparator = "\\";
 std::string gSDLAppPathSeparator = "/";
 #endif
 
+#ifdef _RPI                    
+uint32_t rpi_screen_w;
+uint32_t rpi_screen_h;
+#endif
+
 std::string gSDLAppTitle = "SDL App";
 std::string gSDLAppExec  = "sdlapp";
 
@@ -250,6 +255,12 @@ void SDLAppParseArgs(int argc, char *argv[], int* xres, int* yres, bool* fullscr
             otherargs->push_back(args);
         }
     }
+#ifdef _RPI
+    *fullscreen = true;
+    graphics_get_display_size(0, &rpi_screen_w, &rpi_screen_h);
+    *xres = static_cast<int>(rpi_screen_w);
+    *yres = static_cast<int>(rpi_screen_h);
+#endif
 }
 
 SDLApp::SDLApp() {

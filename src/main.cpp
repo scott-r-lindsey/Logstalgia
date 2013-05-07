@@ -73,6 +73,8 @@ int main(int argc, char *argv[]) {
 
     SDLAppParseArgs(argc, argv, &width, &height, &fullscreen, &arguments);
 
+    printf("started with size %d x %d \n", width, height);
+
     for (int i=0; i<arguments.size(); i++) {
 
         std::string args = arguments[i];
