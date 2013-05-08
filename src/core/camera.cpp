@@ -37,12 +37,13 @@ Light::Light(vec3f pos) {
 }
 
 void Light::lookAt(vec3f target) {
-/*
-    // FIXME!!!
+#ifdef _RPI
+    // FIXME
+#else
     gluLookAt( pos.x,    pos.y,    pos.z,
                target.x, target.y, target.z,
                0.0f,   1.0f,  0.0f);
-*/
+#endif
 }
 
 void Light::setPos(vec3f pos) {
@@ -72,8 +73,11 @@ Camera::Camera(vec3f pos, vec3f target) {
 
 void Camera::focus() {
     display.mode3D(fov, znear, zfar);
-    // FIXME!!!
-    //glMatrixMode(GL_PROJECTION);
+#ifdef _RPI
+    // FIXME
+#else
+    glMatrixMode(GL_PROJECTION);
+#endif
 
     look();
 }
