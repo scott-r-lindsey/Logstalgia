@@ -54,6 +54,20 @@ public:
     virtual const char* what() const throw() { return error.c_str(); }
 };
 
+class EGLException : public std::exception {
+public:
+    EGLException(const std::string& reason)
+        : reason(reason) {}
+
+    ~EGLException() throw() {}
+
+    const char* what() const throw(){
+        return reason.c_str();
+    }
+private:
+    std::string reason;
+};
+
 class SDLAppDisplay {
     SDL_Surface *surface;
 
@@ -103,6 +117,12 @@ public:
     vec3f unproject(vec2f pos);
 
     void checkGLErrors();
+
+private: 
+#ifdef _RPI
+    EGLDisplay egl_display;
+    EGLSurface egl_surface;
+#endif
 };
 
 extern SDLAppDisplay display;

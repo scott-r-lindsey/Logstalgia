@@ -77,27 +77,122 @@ void SDLAppDisplay::init(std::string window_title, int width, int height, bool f
 
     this->fullscreen = fullscreen;
 
-    int flags = SDLFlags(fullscreen);
-
-    SDL_Init(SDL_INIT_TIMER | SDL_INIT_VIDEO);
-    atexit(SDL_Quit);
-
+/* ------------------------------------------------------------------------------------*/
 #ifdef _RPI
 
-    surface = SDL_SetVideoMode(0, 0, 0, SDL_SWSURFACE | SDL_FULLSCREEN);
+    if(SDL_Init(SDL_INIT_VIDEO) != 0){
+        std::string sdlerr(SDL_GetError());
+        throw SDLInitException(sdlerr);
+    }
 
-    printf("hey guys, it's time for EGL!\n");
+    atexit(SDL_Quit);
+
+    surface = SDL_SetVideoMode(0, 0, 0, SDL_SWSURFACE | SDL_FULLSCREEN);
+    if (!surface) {
+        std::string sdlerr(SDL_GetError());
+        throw SDLInitException(sdlerr);
+    }
 
     // Get an EGL display connection:
-/*
     egl_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
     if(egl_display == EGL_NO_DISPLAY)
         throw EGLException("eglGetDisplay");
 
-    printf("k, that's one\n");
-*/
+    // Initialize the EGL display connection:
+    if(eglInitialize(egl_display, NULL, NULL) == EGL_FALSE)
+        throw EGLException("eglInitialize");
+
+    // Get an appropriate EGL frame buffer configuration:
+    EGLConfig config;
+    {
+        EGLint num_config;
+        static const EGLint attribute_list[] =
+        {
+           EGL_RED_SIZE, 8,
+           EGL_GREEN_SIZE, 8,
+           EGL_BLUE_SIZE, 8,
+           EGL_ALPHA_SIZE, 8,
+           EGL_DEPTH_SIZE, 8,
+           EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+           EGL_NONE
+        };
+ 
+        if(eglChooseConfig(egl_display, attribute_list, &config, 1, &num_config) == EGL_FALSE)
+            throw EGLException("eglChooseConfig");
+    }
+
+    // Get an appropriate EGL frame buffer configuration:
+    if(eglBindAPI(EGL_OPENGL_ES_API) == EGL_FALSE)
+        throw EGLException("eglBindAPI");
+ 
+    // Create an EGL rendering context:
+    EGLContext context;
+    {
+        static const EGLint context_attributes[] = 
+        {
+           EGL_CONTEXT_CLIENT_VERSION, 2,
+           EGL_NONE
+        };
+ 
+        context = eglCreateContext(egl_display, config, EGL_NO_CONTEXT, context_attributes);
+        if(context == EGL_NO_CONTEXT)
+            throw EGLException("eglCreateContext");
+    }
+
+    {
+        static EGL_DISPMANX_WINDOW_T nativewindow;
+        uint32_t rpi_screen_w = (uint32_t)width;
+        uint32_t rpi_screen_h = (uint32_t)height;
+
+        DISPMANX_ELEMENT_HANDLE_T dispman_element;
+        DISPMANX_DISPLAY_HANDLE_T dispman_display;
+        DISPMANX_UPDATE_HANDLE_T dispman_update;
+        VC_RECT_T dst_rect;
+        VC_RECT_T src_rect;
+ 
+        dst_rect.x = 0;
+        dst_rect.y = 0;
+
+        dst_rect.width = rpi_screen_w;
+        dst_rect.height = rpi_screen_h;
+           
+        src_rect.x = 0;
+        src_rect.y = 0;
+        src_rect.width = rpi_screen_w << 16;
+        src_rect.height = rpi_screen_h << 16;  
+
+        dispman_display = vc_dispmanx_display_open(0 /* LCD */);
+        dispman_update = vc_dispmanx_update_start(0);
+              
+        dispman_element = vc_dispmanx_element_add(dispman_update, dispman_display, 0 /*layer*/, &dst_rect, 0 /*src*/,
+          &src_rect, DISPMANX_PROTECTION_NONE, 0 /*alpha*/, 0 /*clamp*/, DISPMANX_NO_ROTATE /*transform*/);
+           
+        nativewindow.element = dispman_element;
+        nativewindow.width = rpi_screen_w;
+        nativewindow.height = rpi_screen_h;
+        vc_dispmanx_update_submit_sync( dispman_update );
+           
+        egl_surface = eglCreateWindowSurface(egl_display, config, &nativewindow, NULL);
+        if(egl_surface == EGL_NO_SURFACE)
+            throw EGLException("eglCreateWindowSurface (check your RAM split)");
+    }
+
+    // Connect the context to the surface:
+    if(eglMakeCurrent(egl_display, egl_surface, egl_surface, context) == EGL_FALSE)
+        throw EGLException("eglMakeCurrent");
+
+    // Extra EGL settings:
+    if(eglSwapInterval(egl_display, vsync) == EGL_FALSE)
+        throw EGLException("eglSwapInterval");
+
+    eglSwapBuffers(egl_display, egl_surface);
+
+/* ------------------------------------------------------------------------------------*/
 
 #else
+    int flags = SDLFlags(fullscreen);
+    SDL_Init(SDL_INIT_TIMER | SDL_INIT_VIDEO);
+    atexit(SDL_Quit);
 
     //vsync
     if(vsync) SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
