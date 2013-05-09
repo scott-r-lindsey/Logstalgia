@@ -81,7 +81,14 @@ int TextureResource::colourFormat(SDL_Surface* surface) {
     int format  = 0;
 
 #ifdef _RPI
-    // FIXME
+    // FIXME in no way is it clear that GL_RGBA is correct
+    // Rmask is ff0000!
+    if (colours == 4) {
+        format = GL_RGBA;
+    }
+    else{
+        format = GL_RGB;
+    }
 #else
     if (colours == 4) {
         if (surface->format->Rmask == 0x000000ff) {
